@@ -2776,6 +2776,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts@npm:^4.8.1":
+  version: 4.8.1
+  resolution: "@openzeppelin/contracts@npm:4.8.1"
+  checksum: 99acefde1ae42c2d935ec9b4ebd327e786c499a4ec76b9582eb9adb0ff94a77c48047332fba44fb97b82b5a46d80e74d3e5d8cf73d5defa7f746f2a67f070281
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.9.3":
   version: 2.11.6
   resolution: "@popperjs/core@npm:2.11.6"
@@ -2795,12 +2802,14 @@ __metadata:
     "@nomicfoundation/hardhat-toolbox": ^2.0.1
     "@nomiclabs/hardhat-ethers": ^2.2.2
     "@nomiclabs/hardhat-etherscan": ^3.1.5
+    "@openzeppelin/contracts": ^4.8.1
     "@typechain/ethers-v5": ^10.2.0
     "@typechain/hardhat": ^6.1.5
     "@types/chai": ^4.3.4
     "@types/mocha": ^10.0.1
     "@types/node": ^18.11.18
     chai: ^4.3.7
+    dotenv: ^16.0.3
     ethers: ^5.7.2
     hardhat: ^2.12.6
     hardhat-gas-reporter: ^1.0.9
@@ -4599,6 +4608,13 @@ __metadata:
   dependencies:
     path-type: ^4.0.0
   checksum: fa05e18324510d7283f55862f3161c6759a3f2f8dbce491a2fc14c8324c498286c54282c1f0e933cb930da8419b30679389499b919122952a4f8592362ef4615
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.3":
+  version: 16.0.3
+  resolution: "dotenv@npm:16.0.3"
+  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
   languageName: node
   linkType: hard
 

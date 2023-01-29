@@ -2,6 +2,10 @@
   "name": "@sanswap/blockchain",
   "version": "1.0.0",
   "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.1",
+    "dotenv": "^16.0.3"
+  },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
