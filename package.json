@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "bc": "yarn workspace @sanswap/blockchain",
+    "hh": "yarn bc hardhat",
     "fe": "yarn workspace @sanswap/frontend"
   },
   "devDependencies": {
