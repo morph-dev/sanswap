@@ -1,10 +1,10 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
-import * as dotenv from 'dotenv'
-dotenv.config()
+import { HardhatUserConfig } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  solidity: '0.8.17',
   etherscan: {
     apiKey: process.env.ETHERSCAN_KEY,
   },
@@ -14,9 +14,9 @@ const config: HardhatUserConfig = {
       accounts: {
         mnemonic: process.env.WALLET_MNEMONIC,
         count: 10,
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 export default config;

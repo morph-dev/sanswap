@@ -2842,6 +2842,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sanswap/root@workspace:."
   dependencies:
+    prettier: ^2.8.3
     typescript: ^4.9.4
   languageName: unknown
   linkType: soft
@@ -7769,7 +7770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.3.1":
+"prettier@npm:^2.3.1, prettier@npm:^2.8.3":
   version: 2.8.3
   resolution: "prettier@npm:2.8.3"
   bin:
