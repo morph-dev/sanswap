@@ -1,0 +1,19 @@
+{
+  "name": "@sanswap/root",
+  "license": "MIT",
+  "private": true,
+  "repository": "https://github.com/morph-dev/sanswap.git",
+  "author": "morph",
+  "packageManager": "yarn@3.3.1",
+  "workspaces": [
+    "blockchain",
+    "frontend"
+  ],
+  "scripts": {
+    "bc": "yarn workspace @sanswap/blockchain",
+    "fe": "yarn workspace @sanswap/frontend"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
