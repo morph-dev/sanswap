@@ -4,9 +4,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "yarn run wagmi && vite",
+    "build": "yarn run wagmi && tsc && vite build",
+    "preview": "vite preview",
+    "wagmi": "wagmi generate"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.4.9",

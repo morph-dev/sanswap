@@ -1,19 +1,12 @@
 import { Box, Button } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
-import { useAccount, useConnect, useContractRead } from 'wagmi';
-import { BANK_ADDRESS } from './constants';
-import bankAbi from './contracts/Bank.abi.json';
+import { useAccount, useConnect } from 'wagmi';
+import { useBankTokenSize } from './generated/blockchain';
 
 export default function Root() {
   const { address, isConnected } = useAccount();
   const { connect, connectors } = useConnect();
 
-  const { data: tokenSize, status: tokenSizeStatus } = useContractRead({
-    address: BANK_ADDRESS,
-    abi: bankAbi,
-    functionName: 'tokenSize',
-    watch: true,
-  });
+  const tokenSize = useBankTokenSize();
 
   return (
     <Box w="100%" p={4} gap={4} bg="green" color="white">
@@ -28,7 +21,7 @@ export default function Root() {
         </Button>
       )}
       <br />
-      {tokenSizeStatus == 'success' ? (tokenSize as BigNumber).toNumber() : tokenSizeStatus}
+      {tokenSize.isSuccess ? tokenSize.data?.toNumber() : tokenSize.status}
     </Box>
   );
 }
