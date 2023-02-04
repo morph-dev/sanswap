@@ -1,0 +1,44 @@
+import { parseEther } from 'ethers/lib/utils';
+import { ethers } from 'hardhat';
+
+export async function deployAndAddLiquidity() {
+  const [owner] = await ethers.getSigners();
+
+  const MintableToken = await ethers.getContractFactory('MintableToken');
+
+  const tokenA = await MintableToken.deploy('TokenA', 'TA');
+  console.log('TokenA deployed to:', tokenA.address);
+  const tokenB = await MintableToken.deploy('TokenB', 'TB');
+  console.log('TokenB deployed to:', tokenB.address);
+  const tokenC = await MintableToken.deploy('TokenC', 'TC');
+  console.log('TokenC deployed to:', tokenC.address);
+
+  const Factory = await ethers.getContractFactory('SanSwapFactory');
+  const factory = await Factory.deploy();
+  console.log('Factory deployed to:', factory.address);
+
+  const Router = await ethers.getContractFactory('SanSwapRouter');
+  const router = await Router.deploy(factory.address);
+  console.log('Router deployed to:', router.address);
+
+  for (const token of [tokenA, tokenB, tokenC]) {
+    await token.approve(router.address, ethers.constants.MaxUint256);
+  }
+
+  await router.addLiquidity(
+    owner.address,
+    tokenA.address,
+    tokenB.address,
+    tokenC.address,
+    parseEther('1000000'),
+    parseEther('1000000'),
+    parseEther('1000000')
+  );
+
+  const pool = await ethers.getContractAt(
+    'SanSwapPool',
+    await factory.pool(tokenA.address, tokenB.address, tokenC.address)
+  );
+
+  return { owner, tokenA, tokenB, tokenC, factory, pool, router };
+}
