@@ -18,7 +18,7 @@ describe('MintableToken', function () {
     it('Should have correct totalSupply', async function () {
       const { token } = await loadFixture(deployTokenFixture);
 
-      expect(await token.totalSupply()).to.equal(parseEther('1000000'));
+      expect(await token.totalSupply()).to.equal(parseEther('1000000000'));
     });
 
     it('Should set the right owner', async function () {
@@ -30,7 +30,7 @@ describe('MintableToken', function () {
     it('Should mint all to owner', async function () {
       const { token, owner } = await loadFixture(deployTokenFixture);
 
-      expect(await token.balanceOf(owner.address)).to.equal(parseEther('1000000'));
+      expect(await token.balanceOf(owner.address)).to.equal(parseEther('1000000000'));
     });
   });
 

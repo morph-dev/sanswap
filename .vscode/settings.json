@@ -4,5 +4,4 @@
     "**/.pnp.*": true
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "solidity.formatter": "prettier"
 }
