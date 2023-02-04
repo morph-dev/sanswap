@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { MintableToken } from '../typechain-types';
 
