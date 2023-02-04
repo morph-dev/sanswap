@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat';
+import { updateAbi } from './updateAbi';
 
 async function main() {
   const Bank = await ethers.getContractFactory('Bank');
@@ -12,6 +13,8 @@ async function main() {
   const Router = await ethers.getContractFactory('SanSwapRouter');
   const router = await Router.deploy(factory.address);
   console.log('Router deployed to:', router.address);
+
+  updateAbi();
 }
 
 // We recommend this pattern to be able to use async/await everywhere

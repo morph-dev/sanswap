@@ -9,6 +9,12 @@ const config: HardhatUserConfig = {
     apiKey: process.env.ETHERSCAN_KEY,
   },
   networks: {
+    hardhat: {
+      accounts: {
+        mnemonic: process.env.WALLET_MNEMONIC,
+        count: 10,
+      }
+    },
     goerli: {
       url: process.env.ALCHEMY_GOERLI_URL,
       accounts: {
