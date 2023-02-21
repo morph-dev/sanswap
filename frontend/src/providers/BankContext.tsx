@@ -1,11 +1,6 @@
 import { Address, fetchToken, readContract } from '@wagmi/core';
 import { BigNumber } from 'ethers';
-import {
-  createContext,
-  Dispatch, useEffect,
-  useReducer,
-  useState
-} from 'react';
+import { createContext, Dispatch, PropsWithChildren, useEffect, useReducer, useState } from 'react';
 import { useNetwork } from 'wagmi';
 import { bankConfig, useBankTokenSize } from '../generated/blockchain';
 import { createContextHook } from '../utils/contextUtils';
@@ -38,7 +33,7 @@ const BankDispatchContext = createContext<Dispatch<BankAction> | null>(null);
 export const useBankContext = createContextHook(BankContext);
 export const useBankDispatchContext = createContextHook(BankDispatchContext);
 
-export function BankProvider({ children }: React.PropsWithChildren) {
+export function BankProvider({ children }: PropsWithChildren) {
   const { chain, chains } = useNetwork();
   const { data: tokenSize, refetch: tokenSizeRefetch } = useBankTokenSize();
 
@@ -49,7 +44,7 @@ export function BankProvider({ children }: React.PropsWithChildren) {
   useEffect(() => {
     tokenSizeRefetch();
     dispatch({ type: BankActionType.RESET_TOKENS });
-  }, [chainId]);
+  }, [chainId, tokenSizeRefetch]);
 
   const [updatingTokens, setUpdatingTokens] = useState(false);
   useEffect(() => {
@@ -81,7 +76,7 @@ export function bankReducer(prevState: BankState, action: BankAction): BankState
         ...prevState,
         tokens: [...prevState.tokens, action.token],
       };
-    case BankActionType.ADD_TOKENS:
+    case BankActionType.ADD_TOKENS: {
       const tokensToAdd = action.tokens.filter((token) =>
         prevState.tokens.every((t) => t.address !== token.address)
       );
@@ -89,6 +84,7 @@ export function bankReducer(prevState: BankState, action: BankAction): BankState
         ...prevState,
         tokens: [...prevState.tokens, ...tokensToAdd].sort((t1, t2) => t1.bankId - t2.bankId),
       };
+    }
     case BankActionType.RESET_TOKENS:
       return {
         ...prevState,

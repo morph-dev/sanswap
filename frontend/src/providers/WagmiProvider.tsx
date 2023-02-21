@@ -1,16 +1,14 @@
 import { goerli, hardhat } from '@wagmi/chains';
+import { PropsWithChildren } from 'react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
-export default function WagmiProvider({ children }: { children: JSX.Element }) {
+export default function WagmiProvider({ children }: PropsWithChildren) {
   const { chains, provider, webSocketProvider } = configureChains(
     [hardhat, goerli],
-    [
-      alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_KEY_GOERLI }),
-      publicProvider(),
-    ]
+    [alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_KEY_GOERLI }), publicProvider()]
   );
 
   const client = createClient({

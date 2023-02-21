@@ -1,12 +1,12 @@
-import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { Button, HStack } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 
-type ItemProps = PropsWithChildren & {
+type ItemProps = {
   to: string;
 };
 
-function Item({ to, children }: PropsWithChildren<{ to: string }>) {
+function Item({ to, children }: PropsWithChildren<ItemProps>) {
   return (
     <NavLink to={to}>
       {({ isActive }) => (

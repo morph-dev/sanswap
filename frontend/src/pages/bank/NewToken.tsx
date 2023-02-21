@@ -86,9 +86,9 @@ export default function NewToken() {
                     <Td>Name</Td>
                     <Td>
                       <Input
-                        value={name}
                         onChange={(event) => setName(event.target.value)}
                         placeholder="Mintable Token"
+                        value={name}
                       />
                     </Td>
                   </Tr>
@@ -96,9 +96,9 @@ export default function NewToken() {
                     <Td>Symbol</Td>
                     <Td>
                       <Input
-                        value={symbol}
                         onChange={(event) => setSymbol(event.target.value)}
                         placeholder="MNT"
+                        value={symbol}
                       />
                     </Td>
                   </Tr>
