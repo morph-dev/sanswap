@@ -5,19 +5,23 @@ import {
   Navigate,
   Outlet,
   Route,
-  RouterProvider
+  RouterProvider,
 } from 'react-router-dom';
 import TopBar from './components/topbar/TopBar';
 import Bank from './pages/bank/Bank';
-import Pool from './pages/pool/Pool';
+import Pool from './pages/exchange/Pool';
+import PoolList from './pages/exchange/PoolList';
 import WagmiProvider from './providers/WagmiProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      <Route path="pool" element={<Pool />} />
+      <Route path="exchange">
+        <Route path=":poolId" loader={() => null} element={<Pool />} />
+        <Route index element={<PoolList />} />
+      </Route>
       <Route path="bank" element={<Bank />} />
-      <Route index element={<Navigate to="/pool" />} />
+      <Route index element={<Navigate to="/exchange" />} />
     </Route>
   )
 );
@@ -26,7 +30,7 @@ function Layout() {
   return (
     <Box h="100vh">
       <TopBar />
-      <Box bg="teal" h="full">
+      <Box h="full">
         <Outlet />
       </Box>
     </Box>

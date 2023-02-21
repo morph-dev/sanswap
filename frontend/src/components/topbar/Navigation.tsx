@@ -22,7 +22,7 @@ export default function Navigation() {
   return (
     <HStack>
       <HStack>
-        <Item to="/pool">Pool</Item>
+        <Item to="/exchange">Exchange</Item>
         <Item to="/bank">Bank</Item>
       </HStack>
     </HStack>
