@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "yarn run wagmi && vite",
+    "dev": "vite",
     "build": "yarn run wagmi && tsc && vite build",
     "preview": "vite preview",
     "wagmi": "wagmi generate"
