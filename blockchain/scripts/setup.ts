@@ -1,6 +1,35 @@
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
+export async function giveEther(addresses: string[]) {
+  const [owner] = await ethers.getSigners();
+
+  for (const address of addresses) {
+    if (owner.address !== address) {
+      await owner.sendTransaction({
+        to: address,
+        value: ethers.utils.parseEther('1'),
+      });
+    }
+  }
+}
+
+export async function deployCore() {
+  const Bank = await ethers.getContractFactory('Bank');
+  const bank = await Bank.deploy();
+  console.log('Bank deployed to:', bank.address);
+
+  const Factory = await ethers.getContractFactory('SanSwapFactory');
+  const factory = await Factory.deploy();
+  console.log('Factory deployed to:', factory.address);
+
+  const Router = await ethers.getContractFactory('SanSwapRouter');
+  const router = await Router.deploy(factory.address);
+  console.log('Router deployed to:', router.address);
+
+  return { bank, factory, router };
+}
+
 export async function deployAndAddLiquidity() {
   const [owner] = await ethers.getSigners();
 
