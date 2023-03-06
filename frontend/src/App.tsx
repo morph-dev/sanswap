@@ -9,8 +9,9 @@ import {
 } from 'react-router-dom';
 import TopBar from './components/topbar/TopBar';
 import Bank from './pages/bank/Bank';
-import Pool from './pages/exchange/Pool';
-import PoolList from './pages/exchange/PoolList';
+import Pool from './pages/exchange/pool/Pool';
+import PoolList from './pages/exchange/poolList/PoolList';
+import { ExchangeProvider } from './providers/ExchangeContext';
 import WagmiProvider from './providers/WagmiProvider';
 
 const router = createBrowserRouter(
@@ -41,7 +42,9 @@ export default function App() {
   return (
     <ChakraProvider>
       <WagmiProvider>
-        <RouterProvider router={router} />
+        <ExchangeProvider>
+          <RouterProvider router={router} />
+        </ExchangeProvider>
       </WagmiProvider>
     </ChakraProvider>
   );
