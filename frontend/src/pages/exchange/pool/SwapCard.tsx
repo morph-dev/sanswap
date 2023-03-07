@@ -12,16 +12,15 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import SimpleCart from '../../../common/simpleCard/SimpleCard';
-import { Address, Pool, PoolToken } from '../../../utils/types';
+import SimpleCart from '../../../components/simpleCard/SimpleCard';
+import { Address, PoolToken } from '../../../utils/types';
 import SwapToken, { defaultSwapTokenState, SwapTokenMode, SwapTokenState } from './SwapToken';
 
 export type SwapCardProps = {
-  pool: Pool;
   tokens: PoolToken[];
 };
 
-export default function SwapCard({ pool, tokens }: SwapCardProps) {
+export default function SwapCard({ tokens }: SwapCardProps) {
   const [tokenStates, setTokenStates] = useState<Record<Address, SwapTokenState>>({});
 
   const allHaveState = tokens.every((token) => token.address in tokenStates);

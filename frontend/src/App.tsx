@@ -9,16 +9,17 @@ import {
 } from 'react-router-dom';
 import TopBar from './components/topbar/TopBar';
 import Bank from './pages/bank/Bank';
-import Pool from './pages/exchange/pool/Pool';
+import PoolPage from './pages/exchange/pool/PoolPage';
 import PoolList from './pages/exchange/poolList/PoolList';
 import { ExchangeProvider } from './providers/ExchangeContext';
+import { TokenProvider } from './providers/TokenContext';
 import WagmiProvider from './providers/WagmiProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route path="exchange">
-        <Route path=":poolId" loader={() => null} element={<Pool />} />
+        <Route path=":poolId" loader={() => null} element={<PoolPage />} />
         <Route index element={<PoolList />} />
       </Route>
       <Route path="bank" element={<Bank />} />
@@ -42,9 +43,11 @@ export default function App() {
   return (
     <ChakraProvider>
       <WagmiProvider>
-        <ExchangeProvider>
-          <RouterProvider router={router} />
-        </ExchangeProvider>
+        <TokenProvider>
+          <ExchangeProvider>
+            <RouterProvider router={router} />
+          </ExchangeProvider>
+        </TokenProvider>
       </WagmiProvider>
     </ChakraProvider>
   );

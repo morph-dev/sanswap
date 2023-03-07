@@ -1,9 +1,16 @@
-import { createContext, PropsWithChildren } from 'react';
+import { BigNumber, ethers } from 'ethers';
+import { createContext, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { readContracts, useChainId, useProvider } from 'wagmi';
+import {
+  sanSwapPoolABI,
+  useSanSwapFactory,
+  useSanSwapFactoryGetPoolCount,
+} from '../generated/blockchain';
 import { createContextHook } from '../utils/contextUtils';
 import { Pool } from '../utils/types';
 
 export type ExchangeState = {
-  pools: Pool[];
+  pools: Pool[] | null;
 };
 
 const ExchangeContext = createContext<ExchangeState | null>(null);
@@ -11,24 +18,75 @@ const ExchangeContext = createContext<ExchangeState | null>(null);
 export const useExchangeContext = createContextHook(ExchangeContext);
 
 export function ExchangeProvider({ children }: PropsWithChildren) {
-  // TODO: Make this programmable and updateable.
+  const chainId = useChainId();
+  const provider = useProvider();
+
+  const [pools, setPools] = useState<Pool[] | null>(null);
+
+  const factory = useSanSwapFactory({ signerOrProvider: provider });
+
+  const { data: poolCount } = useSanSwapFactoryGetPoolCount();
+
+  // Reset pools on chain change.
+  useEffect(() => setPools(null), [chainId]);
+
+  const fetchPool = useCallback(
+    async (index: number): Promise<Pool> => {
+      if (!factory) {
+        throw Error('Pool factory unknown');
+      }
+      const poolAddress = await factory
+        .allPools(BigNumber.from(index))
+        .then(ethers.utils.getAddress);
+
+      const poolReadConfig = { address: poolAddress, abi: sanSwapPoolABI };
+      const [symbol, tokenA, tokenB, tokenC] = await readContracts({
+        contracts: [
+          { ...poolReadConfig, functionName: 'symbol' },
+          { ...poolReadConfig, functionName: 'tokenA' },
+          { ...poolReadConfig, functionName: 'tokenB' },
+          { ...poolReadConfig, functionName: 'tokenC' },
+        ],
+      });
+      return {
+        address: poolAddress,
+        symbol: symbol,
+        tokenA: ethers.utils.getAddress(tokenA),
+        tokenB: ethers.utils.getAddress(tokenB),
+        tokenC: ethers.utils.getAddress(tokenC),
+      };
+    },
+    [factory]
+  );
+
+  useEffect(() => {
+    const count = poolCount?.toNumber() ?? 0;
+    if (count <= (pools?.length ?? 0)) {
+      return;
+    }
+
+    let aborted = false;
+
+    const fetchPools = async () => {
+      const newPools = [...(pools ?? [])];
+      while (!aborted && newPools.length < count) {
+        newPools.push(await fetchPool(newPools.length));
+      }
+
+      if (!aborted) {
+        setPools(newPools);
+      }
+    };
+
+    fetchPools().catch(console.error);
+
+    return () => {
+      aborted = true;
+    };
+  }, [pools, poolCount, fetchPool]);
+
   const state: ExchangeState = {
-    pools: [
-      {
-        address: '0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81',
-        symbol: 'SS-mUSD-mETH-mBTC',
-        tokenA: '0x5392A33F7F677f59e833FEBF4016cDDD88fF9E67',
-        tokenB: '0x75537828f2ce51be7289709686A69CbFDbB714F1',
-        tokenC: '0xE451980132E65465d0a498c53f0b5227326Dd73F',
-      },
-      {
-        address: '0x6D544390Eb535d61e196c87d6B9c80dCD8628Acd',
-        symbol: 'SS-mUSD-mETH-mSS',
-        tokenA: '0x5392A33F7F677f59e833FEBF4016cDDD88fF9E67',
-        tokenB: '0x75537828f2ce51be7289709686A69CbFDbB714F1',
-        tokenC: '0xa783CDc72e34a174CCa57a6d9a74904d0Bec05A9',
-      },
-    ],
+    pools,
   };
   return <ExchangeContext.Provider value={state}>{children}</ExchangeContext.Provider>;
 }

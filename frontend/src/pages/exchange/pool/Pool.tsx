@@ -1,57 +1,63 @@
-import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Button, Heading, HStack, VStack } from '@chakra-ui/react';
-import { Navigate, useNavigate, useParams } from 'react-router';
-import { useExchangeContext } from '../../../providers/ExchangeContext';
-import { PoolToken } from '../../../utils/types';
+import { Box } from '@chakra-ui/react';
+import { ethers } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
+import Loading from '../../../components/loading/Loading';
+import { useSanSwapPoolReserves } from '../../../generated/blockchain';
+import { useTokenContext } from '../../../providers/TokenContext';
+import { Address, Pool as PoolType, PoolToken } from '../../../utils/types';
 import LiquidityCard from './LiquidityCard';
 import SwapCard from './SwapCard';
 
-export default function Pool() {
-  const { pools } = useExchangeContext();
-  const { poolId } = useParams();
-  const navigate = useNavigate();
+export type PoolProps = {
+  pool: PoolType;
+};
 
-  const pool = pools.find((p) => p.address.toLowerCase() === poolId?.toLowerCase());
-  if (!pool) {
-    return <Navigate to="/exchange" />;
+export default function Pool({ pool }: PoolProps) {
+  const { tokens: allTokens, fetchAndUpdateTokens } = useTokenContext();
+
+  const { data: reserves } = useSanSwapPoolReserves({ address: pool.address });
+
+  const [tokens, setTokens] = useState<PoolToken[] | null>(null);
+
+  const tokenAddresses = useMemo(() => [pool.tokenA, pool.tokenB, pool.tokenC], [pool]);
+
+  useEffect(() => {
+    if (!reserves) {
+      return;
+    }
+
+    const missingTokens: Address[] = [];
+
+    const result: PoolToken[] = [];
+    for (let i = 0; i < 3; i++) {
+      const tokenAddress = tokenAddresses[i];
+      const token = allTokens[tokenAddress];
+      if (!token) {
+        missingTokens.push(tokenAddress);
+        continue;
+      }
+      result.push({
+        ...token,
+        reserves: parseFloat(ethers.utils.formatUnits(reserves[i], token.decimals)),
+      });
+    }
+
+    if (missingTokens.length > 0) {
+      fetchAndUpdateTokens(missingTokens);
+      return;
+    }
+
+    setTokens(result);
+  }, [pool, reserves, allTokens, fetchAndUpdateTokens, tokenAddresses]);
+
+  if (!tokens) {
+    return <Loading />;
   }
 
-  const tokens: PoolToken[] = [
-    {
-      address: '0x5392A33F7F677f59e833FEBF4016cDDD88fF9E67',
-      name: 'USD stable coin',
-      symbol: 'mUSD',
-      decimals: 18,
-      reserves: 1000000000,
-    },
-    {
-      address: '0x75537828f2ce51be7289709686A69CbFDbB714F1',
-      name: 'Wrapped ETH',
-      symbol: 'mETH',
-      decimals: 18,
-      reserves: 49400000,
-    },
-    {
-      address: '0xa783CDc72e34a174CCa57a6d9a74904d0Bec05A9',
-      name: 'Wrapped BTC',
-      symbol: 'mBTC',
-      decimals: 18,
-      reserves: 3400000,
-    },
-  ];
-
   return (
-    <VStack>
-      <VStack align="stretch">
-        <HStack>
-          <Button leftIcon={<ArrowBackIcon />} onClick={() => navigate('/exchange')}>
-            Back
-          </Button>
-          <Heading size="md">{pool.symbol}</Heading>
-        </HStack>
-        <LiquidityCard tokens={tokens} />
-        <SwapCard pool={pool} tokens={tokens} />
-      </VStack>
-    </VStack>
+    <Box>
+      <LiquidityCard tokens={tokens} />
+      <SwapCard tokens={tokens} />
+    </Box>
   );
 }

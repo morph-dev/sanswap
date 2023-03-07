@@ -11,11 +11,16 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
+import Loading from '../../../components/loading/Loading';
 import { useExchangeContext } from '../../../providers/ExchangeContext';
 import PoolItem from './PoolItem';
 
 export default function PoolList() {
   const { pools } = useExchangeContext();
+
+  if (!pools) {
+    return <Loading />;
+  }
 
   return (
     <VStack>
