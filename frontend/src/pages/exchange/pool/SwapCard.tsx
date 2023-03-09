@@ -7,12 +7,10 @@ import {
   CardHeader,
   Heading,
   HStack,
-  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import SimpleCart from '../../../components/simpleCard/SimpleCard';
 import { Address, PoolToken } from '../../../utils/types';
 import SwapToken, { defaultSwapTokenState, SwapTokenMode, SwapTokenState } from './SwapToken';
 
@@ -20,32 +18,44 @@ export type SwapCardProps = {
   tokens: PoolToken[];
 };
 
+function defaultTokenStates(tokens: PoolToken[]) {
+  return Object.fromEntries(
+    tokens.map<[Address, SwapTokenState]>((token) => [token.address, defaultSwapTokenState()])
+  );
+}
+
 export default function SwapCard({ tokens }: SwapCardProps) {
-  const [tokenStates, setTokenStates] = useState<Record<Address, SwapTokenState>>({});
+  const [tokenStates, setTokenStates] = useState<Record<Address, SwapTokenState>>(
+    defaultTokenStates(tokens)
+  );
+  const [estimated, setEstimated] = useState(false);
 
-  const allHaveState = tokens.every((token) => token.address in tokenStates);
+  const sellTokens = Object.values(tokenStates).filter(
+    (tokenState) => tokenState.mode === SwapTokenMode.SELL
+  );
+  const buyTokens = Object.values(tokenStates).filter(
+    (tokenState) => tokenState.mode === SwapTokenMode.BUY
+  );
 
-  if (!allHaveState) {
-    setTokenStates(
-      Object.fromEntries(
-        tokens.map<[Address, SwapTokenState]>((token) => [
-          token.address,
-          tokenStates[token.address] ?? defaultSwapTokenState(),
-        ])
-      )
-    );
+  const sellTokensCount = sellTokens.length;
+  const buyTokensCount = buyTokens.length;
+  const hasBuyAndSell = sellTokensCount > 0 && buyTokensCount > 0;
 
-    return (
-      <SimpleCart header="Swap">
-        <Spinner />
-      </SimpleCart>
-    );
-  }
+  const allSellsPositive = sellTokens.every((tokenStates) => tokenStates.valueAsNumber > 0);
 
-  const hasBuy = tokens.some((token) => tokenStates[token.address].mode === SwapTokenMode.BUY);
-  const hasSell = tokens.some((token) => tokenStates[token.address].mode === SwapTokenMode.SELL);
+  const swapEnabled = hasBuyAndSell && allSellsPositive;
 
-  const swapEnabled = hasBuy && hasSell;
+  const errorMessage = hasBuyAndSell
+    ? allSellsPositive
+      ? ''
+      : 'All sold tokens need to be positive'
+    : 'At least one buy and one sell required';
+
+  const estimateSwap = () => {
+    if (!swapEnabled) {
+      throw Error('Swap not enabled.');
+    }
+  };
 
   return (
     <Card>
@@ -60,23 +70,23 @@ export default function SwapCard({ tokens }: SwapCardProps) {
                 key={token.address}
                 token={token}
                 state={tokenStates[token.address]}
-                onStateChange={(status) =>
+                onStateChange={(status) => {
+                  setEstimated(false);
                   setTokenStates({
                     ...tokenStates,
                     [token.address]: status,
-                  })
-                }
+                  });
+                }}
               />
             ))}
           </HStack>
-          {swapEnabled ? null : <Text color="crimson">At least one buy and one sell required</Text>}
+          {swapEnabled ? null : <Text color="crimson">{errorMessage}</Text>}
         </VStack>
       </CardBody>
       <CardFooter>
         <HStack justify="end" w="full">
           <ButtonGroup isDisabled={!swapEnabled}>
-            <Button>Estimate</Button>
-            <Button>Swap</Button>
+            {estimated ? <Button>Swap</Button> : <Button>Estimate</Button>}
           </ButtonGroup>
         </HStack>
       </CardFooter>

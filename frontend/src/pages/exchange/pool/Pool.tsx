@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import Loading from '../../../components/loading/Loading';
@@ -55,9 +55,9 @@ export default function Pool({ pool }: PoolProps) {
   }
 
   return (
-    <Box>
+    <VStack align="stretch">
       <LiquidityCard tokens={tokens} />
       <SwapCard tokens={tokens} />
-    </Box>
+    </VStack>
   );
 }
